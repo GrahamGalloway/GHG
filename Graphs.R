@@ -3,9 +3,12 @@ sectorData <- filter(GHGdata,Pollutant=="Total - All Pollutants" & Year==current
 sectorData$Sector [sectorData$Sector=="Transport (excluding international)"] <- "Transport"
 sectorData$Sector [sectorData$Sector=="International Aviation and Shipping"] <- "International Transport"         
 
-
+percent <- 100*sectorData$Emissions/sum( sectorData$Emissions)
+label <- paste(sectorData$Sector,"\n ",round(sectorData$Emissions,1)," MtC02","\n ",round(percent,1)," %")
 
   pieChartSector <- plot_ly(sectorData, labels = ~Sector, values = ~Emissions, type = 'pie', textinfo = 'label+percent',
+                            text = label,
+                            hoverinfo = 'text',
           marker = list(colors = ~colors)) %>%
     layout(xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
            yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
@@ -14,15 +17,22 @@ sectorData$Sector [sectorData$Sector=="International Aviation and Shipping"] <- 
 ##################################################################
   
   #creating the pollutant plot
-  pollutantData <- filter(GHGdata, Year==currentYear & Sector =="Total - All Sectors" &! Pollutant=="Total - All Pollutants" )
   
+
+  
+  pollutantData <- filter(GHGdata, Year==currentYear & Sector =="Total - All Sectors" &! Pollutant=="Total - All Pollutants" )
+  percent <- 100*pollutantData$Emissions/sum( pollutantData$Emissions)
+  label <- paste(pollutantData$Pollutant,"\n ",round(pollutantData$Emissions,1)," MtC02","\n ",round(percent,1)," %")
   
  
   pieChartPollutant <- plot_ly(pollutantData, labels = ~Pollutant, values = ~Emissions, type = 'pie', textinfo = 'label+percent',
+                               text = label,
+                               hoverinfo = 'text',
             marker = list(colors = ~colors)) %>%
       layout(xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
              yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-             showlegend = FALSE)
+             showlegend = FALSE
+            )
     
   
   
@@ -50,7 +60,14 @@ sectorData$Sector [sectorData$Sector=="International Aviation and Shipping"] <- 
   
   
   #create sector change bar chart
-  sectorChangeChart <-   plot_ly(sectorChangeO1, y = ~Sector, x = ~perChange1990toCurrent, type = 'bar',orientation = 'h', name = 'SF Zoo') %>% 
+  label <- paste( sectorChangeO1$Sector,"\n ",round(sectorChangeO1$perChange1990toCurrent,1)," %")
+  
+  sectorChangeChart <-   plot_ly(sectorChangeO1, y = ~Sector,
+                                 x = ~perChange1990toCurrent, 
+                                 type = 'bar',orientation = 'h',
+                                 name = 'SF Zoo',
+                                 text = label,
+                                 hoverinfo = 'text') %>% 
       layout(
         xaxis = list(title = '% change'), 
         barmode = 'group',
@@ -63,7 +80,15 @@ sectorData$Sector [sectorData$Sector=="International Aviation and Shipping"] <- 
   #####################################################################
   
   #create sector change bar chart
-  sectorChangeChartLast <-     plot_ly(sectorChangeO2, y = ~Sector, x = ~perChangelastYear, type = 'bar',orientation = 'h', name = 'SF Zoo') %>% 
+  label <- paste( sectorChangeO2$Sector,"\n ",round(sectorChangeO2$perChangelastYear,1)," %")
+  sectorChangeChartLast <-     plot_ly(sectorChangeO2,
+                                       y = ~Sector,
+                                       x = ~perChangelastYear,
+                                       type = 'bar',orientation = 'h',
+                                       name = 'SF Zoo',
+                                       text = label,
+                                       hoverinfo = 'text'
+                                       ) %>% 
       layout(
         xaxis = list(title = '% change'), 
         barmode = 'group',

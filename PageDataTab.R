@@ -1,5 +1,3 @@
-#prepares an entire page that can be displayed in the shiny app
-#page displays the interactive table and graph where you can pick what data you want
 PageDataTab <- fluidPage(
   
   # Title

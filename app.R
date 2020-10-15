@@ -22,12 +22,13 @@ library(tidyr)
 library(plotly)
 
 
-
+source('ReactiveTableAndGraphModule.R') # handle the reactive user input and related graph and table
 source('DataProcessing.R') # reads data from stats.gov and prepares various data frames that will be needed
 source('valueBoxes.R') # code to prepare value boxes
 source('Graphs.R') # code to make the static (non reactive) graphs
 source('PageDataSummary.R') # code that gives UI layout for summary page
 source('PageDataTab.R') #code that gives UI layout for the data exploring tab
+
 
 
 ############################### UI #####################################
@@ -41,6 +42,7 @@ ui <- dashboardPage(
   
   dashboardSidebar(
     sidebarMenu(
+     
       menuItem("DataSummary", tabName = "dataSummaryTab", icon = icon("th")),
       #here add name of the menu items     
       menuItem("Data", tabName = "dataTab", icon = icon("line-chart")) 
@@ -57,8 +59,8 @@ ui <- dashboardPage(
       PageDataSummary #summary page prepared in own R file, displays summary stats
       ),
       tabItem(tabName = "dataTab",
-      PageDataTab #data summary page prepared in own R file, displays data tab that lets you explore data
-      )
+              PageDataTab
+              )
     )#end tab items
   ) # end dash body
 )#end UI
@@ -66,7 +68,7 @@ ui <- dashboardPage(
 
 ############################## server ##############################
 
-server <- function(input, output) {
+server <- function(input, output, session) {
 
   #creating the valueBoxOutput content
   output$valueBoxTotEmissions <- renderValueBox({    valueBoxTotEmissions  })
@@ -96,7 +98,7 @@ server <- function(input, output) {
                 )
     
   })
-  
+
   
   # Downloadable csv of selected dataset ----
   #  output$downloadData <- downloadHandler(content = subset(data_1(),  Year>= input$range[1] & Year<= input$range[2], filename="downloadData"))
@@ -121,6 +123,7 @@ server <- function(input, output) {
       
       #used to define labels for the hover text
       #theres a built in function called hoverformat that should do this but I couldn't get it to work
+   
       label <- paste(sect[[1,3]],"\n ",round(sect[[2]],1)," MtC02")
       
       
@@ -174,7 +177,6 @@ server <- function(input, output) {
   )
   
   
-
 }
 
 ############## run ############################
